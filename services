@@ -1,0 +1,55 @@
+services:
+    postgres:
+        image: postgres:13
+        environment:
+            POSTGRES_USER: airflow
+            POSTGRES_PASSWORD: airflow
+            POSTGRES_DB: airflow
+        volumes:
+            - postgres-db-volumn:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD", "pg_isready","-U", "airflow"]
+            interval: 5s
+            retries: 5
+        restart: always
+
+docker run -it 
+    -e POSTGRES_USER="root" 
+    -e POSTGRES_PASSWORD="airflow" 
+    -e POSTGRES_DB="ny_taxi" 
+    -v ny_taxi_postgres_data:/var/lib/postgresql/data 
+    -p 5432:5432 
+postgres:13
+
+
+docker run -it 
+    -e PGADMIN_DEFAULT_EMAIL="admin@admin.com"
+    -e PGADMIN_DEFAULT_PASSWORD="root"
+    -p 8080:80
+dpage/pgadmin4
+
+
+#postgres docker with network
+docker run -it 
+    -e POSTGRES_USER="root" 
+    -e POSTGRES_PASSWORD="airflow" 
+    -e POSTGRES_DB="ny_taxi" 
+    -v ny_taxi_postgres_data:/var/lib/postgresql/data 
+    -p 5432:5432 
+    --network=pg-networl
+    --name=pg-database
+    postgres:13
+
+docker run -it 
+    -e PGADMIN_DEFAULT_EMAIL="admin@admin.com"
+    -e PGADMIN_DEFAULT_PASSWORD="root"
+    -p 5050:80
+    --network=pg-networl
+    --name=pg-admin
+    dpage/pgadmin4
+
+docker run -d 
+  --name adminer 
+  --network=pg-networl
+  -p 8080:8080 
+  adminer
